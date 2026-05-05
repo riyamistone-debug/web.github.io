@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebForge - Custom Website Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #004e89;
+            --accent: #f7931e;
+            --dark: #0f1419;
+            --darker: #0a0e13;
+            --light: #f5f7fa;
+            --text: #e0e6ed;
+            --border: #1a202c;
+            --success: #10b981;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, #1a1f2e 100%);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 78, 137, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: #a0a8b8;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .form-wrapper {
+            background: rgba(26, 32, 44, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-grid.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, textarea, select {
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: rgba(15, 20, 25, 0.5);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #5a6270;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 20, 25, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            text-transform: none;
+            letter-spacing: normal;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-item:hover {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            width: 18px;
+            height: 18px;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-top: 40px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 16px 40px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            min-width: 200px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            border: 2px solid var(--border);
+            min-width: 150px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 53, 0.1);
+            border-color: var(--primary);
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+            padding: 18px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            animation: slideIn 0.4s ease-out;
+            z-index: 1000;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-wrapper {
+                padding: 40px 20px;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-item {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+
+        .info-text {
+            font-size: 0.9rem;
+            color: #7a8292;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">WebForge</div>
+            <p class="tagline">CRAFT YOUR DIGITAL PRESENCE</p>
+        </header>
+
+        <div class="form-wrapper">
+            <form id="websiteForm">
+                <!-- Basic Information -->
+                <h2 class="section-title">Your Information</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="company">Company/Brand Name *</label>
+                        <input type="text" id="company" name="company" placeholder="Your Company" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                </div>
+
+                <!-- Project Details -->
+                <h2 class="section-title">Project Details</h2>
+                <div class="form-grid full">
+                    <div class="form-group">
+                        <label for="industry">Industry/Niche *</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select your industry...</option>
+                            <option value="tech">Technology</option>
+                            <option value="ecommerce">E-Commerce</option>
+                            <option value="service">Service-Based</option>
+                            <option value="portfolio">Portfolio/Creative</option>
+                            <option value="nonprofit">Non-Profit</option>
+                            <option value="blog">Blog/Publishing</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid full">
+                    <div class="form-group">
+                        <label for="description">Website Description *</label>
+                        <textarea id="description" name="description" placeholder="Tell us about your website and its goals..." required></textarea>
+                        <p class="info-text">Describe your vision, target audience, and main objectives</p>
+                    </div>
+                </div>
+
+                <!-- Website Features -->
+                <h2 class="section-title">Features & Functionality</h2>
+                <div class="form-group">
+                    <label>Select the features you need:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-responsive" name="features" value="responsive">
+                            <label for="feature-responsive">Responsive Design (Mobile-Friendly)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-contact" name="features" value="contact">
+                            <label for="feature-contact">Contact Forms</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-blog" name="features" value="blog">
+                            <label for="feature-blog">Blog Section</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-gallery" name="features" value="gallery">
+                            <label for="feature-gallery">Gallery/Portfolio</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-ecommerce" name="features" value="ecommerce">
+                            <label for="feature-ecommerce">E-Commerce Functionality</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-seo" name="features" value="seo">
+                            <label for="feature-seo">SEO Optimization</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-analytics" name="features" value="analytics">
+                            <label for="feature-analytics">Analytics Integration</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="feature-social" name="features" value="social">
+                            <label for="feature-social">Social Media Integration</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Design Preferences -->
+                <h2 class="section-title">Design Preferences</h2>
+                <div class="form-group">
+                    <label>Color Scheme Preference:</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="theme-modern" name="theme" value="modern" checked>
+                            <label for="theme-modern">Modern & Minimal</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="theme-bold" name="theme" value="bold">
+                            <label for="theme-bold">Bold & Vibrant</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="theme-dark" name="theme" value="dark">
+                            <label for="theme-dark">Dark & Elegant</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="theme-light" name="theme" value="light">
+                            <label for="theme-light">Light & Clean</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="timeline">Project Timeline *</label>
+                        <select id="timeline" name="timeline" required>
+                            <option value="">Select timeline...</option>
+                            <option value="urgent">1-2 weeks (Urgent)</option>
+                            <option value="standard">2-4 weeks</option>
+                            <option value="flexible">1-2 months (Flexible)</option>
+                            <option value="not-decided">Not decided yet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget Range *</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">Select budget...</option>
+                            <option value="5000">$2,500 - $5,000</option>
+                            <option value="10000">$5,000 - $10,000</option>
+                            <option value="25000">$10,000 - $25,000</option>
+                            <option value="50000">$25,000 - $50,000</option>
+                            <option value="open">Open Budget</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <h2 class="section-title">Additional Details</h2>
+                <div class="form-grid full">
+                    <div class="form-group">
+                        <label for="additional">Anything else we should know? *</label>
+                        <textarea id="additional" name="additional" placeholder="Competitors, inspiration links, brand guidelines, specific requests..." required></textarea>
+                        <p class="info-text">Share links, references, or any special requirements</p>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Send Request</button>
+                    <button type="reset" class="btn-secondary">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="success-message" id="successMessage">
+        ✓ Request submitted successfully! We'll contact you soon.
+    </div>
+
+    <script>
+        const form = document.getElementById('websiteForm');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                company: formData.get('company'),
+                phone: formData.get('phone'),
+                industry: formData.get('industry'),
+                description: formData.get('description'),
+                features: formData.getAll('features'),
+                theme: formData.get('theme'),
+                timeline: formData.get('timeline'),
+                budget: formData.get('budget'),
+                additional: formData.get('additional'),
+                submittedAt: new Date().toISOString()
+            };
+
+            // Log the data (in a real app, send to server)
+            console.log('Website Request:', data);
+            
+            // Show success message
+            successMessage.classList.add('show');
+            
+            // Reset form
+            form.reset();
+            
+            // Hide success message after 4 seconds
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 4000);
+        });
+    </script>
+</body>
+</html>
